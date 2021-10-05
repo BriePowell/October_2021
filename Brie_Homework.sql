@@ -6,30 +6,33 @@ WHERE last_name LIKE 'Wahlberg';
 
 
 --Question 2
-SELECT COUNT(amount)
+SELECT COUNT(*)
 FROM payment
 WHERE amount BETWEEN 3.99 AND 5.99;
 --Answer: 5607
 
 
 --Question 3
-SELECT COUNT(film_id)
-FROM inventory;
---Answer: 4581 (double check that)
+SELECT film_id, COUNT(*) as total_films
+FROM inventory
+GROUP BY film_id
+ORDER BY total_films DESC
+LIMIT 1;
+--Answer: film id: 350 (72 films with 8 copies in inventory)
 
 
 --Question 4
-SELECT COUNT(last_name)
+SELECT *
 FROM customer
-WHERE last_name LIKE 'William';
---Answer: 0
+WHERE last_name = 'William';
+--Answer: 0, no customers with the last name 'William'
 
 
---Question 5 - What store employee (get the id) sold the most rentals? 
---SELECT rental_id
---FROM rental, staff
---GROUP BY first_name, SUM(rental_id)
---This block needs WORK
+--Question 5 
+SELECT staff_id, COUNT(*)
+FROM rental
+GROUP BY staff_id;
+--Answer: Employee # 1 sold more, with 8040 rentals
 
 
 --Question 6
@@ -39,23 +42,29 @@ GROUP BY district;
 --Answer: 378
 
 
---Question 7 What film has the most actors in it? (use film_actor table and get film_id)
+--Question 7
+SELECT film_id, count(*) as num_actors
+FROM film_actor
+GROUP BY film_id
+ORDER BY num_actors DESC
+LIMIT 1;
+--Answer: Film # 508 with 15 actors
+
+
+--Question 8
 SELECT *
-FROM film_actor;
-
---Question 8 From store_id 1, how many customers have a last name ending with ‘es’? (use customer table) 
-SELECT *
-FROM store
+FROM customer
+WHERE store_id = 1 AND last_name LIKE '%es';
+--Answer: 13
 
 
---Question 9 How many payment amounts (4.99, 5.99, etc.) had a number of rentals above 250 for customers  with ids between 380 and 430? (use group by and having > 250) 
-SELECT customer_id, COUNT(amount) as number_of_payments
+--Question 9 
+SELECT COUNT(rental_id), amount
 FROM payment
-HAVING customer_id BETWEEN 380 and 430
-GROUP BY amount 
-HAVING COUNT(*) > 250
-ORDER BY number_of_payments;
---Answer: 
+WHERE customer_id BETWEEN 380 AND 430
+GROUP BY amount
+HAVING COUNT (rental_id) > 250
+--Answer: 3 (2.99, 4.99, 0.99)
 
 --Question 10
 SELECT rating, COUNT(film)
